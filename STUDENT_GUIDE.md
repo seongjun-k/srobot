@@ -1,27 +1,28 @@
-# ROS 1 Noetic 로봇 원격 조종 패키지 제작 실습
+# ROS 1 Noetic 터틀봇 원격 조종 패키지 제작 실습
 
 ## 1. 프로젝트 개요
 
 ### 1) 실습 목적
 - ROS의 기본 통신 원리인 퍼블리셔(Publisher)와 서브스크라이버(Subscriber) 구조를 이해합니다.
-- 로봇 바퀴 모터 제어 표준 메시지인 geometry_msgs/Twist의 구조와 동작 방식을 이해합니다.
-- 노트북 키보드 입력을 통해 원격 로봇을 실시간 조종하는 srobot 패키지를 완성합니다.
+- 터틀봇 바퀴 모터 제어 표준 메시지인 geometry_msgs/Twist의 구조와 동작 방식을 이해합니다.
+- 노트북 키보드 입력을 통해 원격 터틀봇을 실시간 조종하는 srobot 패키지를 완성합니다.
 
 ### 2) 시스템 통신 구조
 - 노트북 (teleop_key.py) : 키보드 입력을 감지하여 /srobot/key_cmd 토픽(String) 발행
-- 무선 네트워크 (Wi-Fi) : 노트북과 로봇 간 ROS 멀티 마신 무선 통신 연결
-- 로봇 (motor_driver.py) : /srobot/key_cmd 토픽 수신 후 /cmd_vel 토픽(Twist) 발행
-- OpenCR 보드 (rosserial) : /cmd_vel 속도 지휘값을 받아 좌/우 다이나믹셀 모터 구동
+- 무선 네트워크 (Wi-Fi) : 노트북과 터틀봇 간 ROS 멀티 마신 무선 통신 연결
+- 터틀봇 (motor_driver.py) : /srobot/key_cmd 토픽 수신 후 /cmd_vel 토픽(Twist) 발행
+- OpenCR 보드 (rosserial) : /cmd_vel 속도 지휘값을 받아 터틀봇 좌/우 다이나믹셀 모터 구동
 
 ---
 
 ## 2. 패키지 구성 및 준비
 
 ### 1) 패키지 이름 : srobot
-### 2) 의존성 패키지 : rospy, std_msgs, geometry_msgs, rosserial_python
+### 2) 대상 로봇 : 터틀봇 (TurtleBot3 Burger 호환, OpenCR + 다이나믹셀 XL430)
+### 3) 의존성 패키지 : rospy, std_msgs, geometry_msgs, rosserial_python
 
-### 3) 로봇 측 필수 패키지 설치 및 권한 설정
-로봇(라즈베리파이) 터미널에서 OpenCR 시리얼 통신 패키지를 설치하고 권한을 부여합니다:
+### 4) 터틀봇 측 필수 패키지 설치 및 권한 설정
+터틀봇(라즈베리파이) 터미널에서 OpenCR 시리얼 통신 패키지를 설치하고 권한을 부여합니다:
 
 ```bash
 sudo apt update
@@ -29,7 +30,7 @@ sudo apt install -y ros-noetic-rosserial-python ros-noetic-rosserial-msgs
 sudo usermod -aG dialout $USER
 ```
 
-### 4) 깃허브에서 패키지 다운로드 (Git Clone)
+### 5) 깃허브에서 패키지 다운로드 (Git Clone)
 이미 완성된 패키지를 깃허브에서 내려받아 바로 실습할 경우 워크스페이스에서 실행합니다:
 
 ```bash
@@ -37,7 +38,7 @@ cd ~/turtle_ws/src
 git clone https://github.com/seongjun-k/srobot.git
 ```
 
-### 5) 직접 패키지 생성하기 (처음부터 직접 만들 경우)
+### 6) 직접 패키지 생성하기 (처음부터 직접 만들 경우)
 패키지를 기초부터 직접 만들어볼 경우 아래 명령어로 패키지와 폴더를 생성합니다:
 
 ```bash
@@ -53,7 +54,7 @@ mkdir scripts launch
 
 ### 1) 소스 파일 경로 : scripts/teleop_key.py
 ### 2) 소스 코드 작성
-노트북에서 엔터(Enter) 없이 키보드 입력을 즉시 감지하여 로봇으로 전송하는 노드입니다:
+노트북에서 엔터(Enter) 없이 키보드 입력을 즉시 감지하여 터틀봇으로 전송하는 노드입니다:
 
 ```python
 #!/usr/bin/env python3
@@ -122,11 +123,11 @@ chmod +x scripts/teleop_key.py
 
 ---
 
-## 4. 로봇 모터 드라이버 노드 작성 (motor_driver.py)
+## 4. 터틀봇 모터 드라이버 노드 작성 (motor_driver.py)
 
 ### 1) 소스 파일 경로 : scripts/motor_driver.py
 ### 2) 소스 코드 작성
-키 입력을 수신하여 다이나믹셀 모터 구동용 Twist 속도로 변환해 /cmd_vel로 발행하는 노드입니다:
+키 입력을 수신하여 터틀봇 다이나믹셀 모터 구동용 Twist 속도로 변환해 /cmd_vel로 발행하는 노드입니다:
 
 ```python
 #!/usr/bin/env python3
@@ -224,7 +225,7 @@ chmod +x scripts/motor_driver.py
 
 ## 5. 런치(Launch) 파일 작성
 
-### 1) 로봇용 런치 파일 : launch/robot.launch
+### 1) 터틀봇용 런치 파일 : launch/robot.launch
 OpenCR 통신 노드와 모터 드라이버 노드를 하나의 프로세스로 함께 실행합니다:
 
 ```xml
@@ -276,39 +277,39 @@ rospack find srobot
 
 ---
 
-## 7. 네트워크 환경 설정 (노트북과 로봇 무선 연결)
+## 7. 네트워크 환경 설정 (노트북과 터틀봇 무선 연결)
 
 ### 1) 내 IP 확인하기
-노트북과 로봇 각각 터미널에서 자신의 Wi-Fi IP 주소를 확인합니다:
+노트북과 터틀봇 각각 터미널에서 자신의 Wi-Fi IP 주소를 확인합니다:
 
 ```bash
 hostname -I
 ```
 
 ### 2) 환경변수 설정 원리
-- ROS_MASTER_URI : roscore가 실행 중인 로봇의 IP 주소 (양쪽 모두 동일하게 입력)
+- ROS_MASTER_URI : roscore가 실행 중인 터틀봇의 IP 주소 (양쪽 모두 동일하게 입력)
 - ROS_IP : 현재 명령어를 입력하고 있는 컴퓨터 본인의 IP 주소
 
-### 3) 로봇 환경변수 등록
+### 3) 터틀봇 환경변수 등록
 
 ```bash
-export ROS_MASTER_URI=http://<로봇IP>:11311
-export ROS_IP=<로봇IP>
+export ROS_MASTER_URI=http://<터틀봇IP>:11311
+export ROS_IP=<터틀봇IP>
 ```
 
 ### 4) 노트북 환경변수 등록
 
 ```bash
-export ROS_MASTER_URI=http://<로봇IP>:11311
+export ROS_MASTER_URI=http://<터틀봇IP>:11311
 export ROS_IP=<노트북IP>
 ```
 
 ---
 
-## 8. 로봇 주행 실습
+## 8. 터틀봇 주행 실습
 
-### 1) 로봇에서 모터 노드 실행
-로봇에 SSH 접속하거나 로봇 본체 터미널에서 아래 명령을 실행합니다:
+### 1) 터틀봇에서 모터 노드 실행
+터틀봇에 SSH 접속하거나 본체 터미널에서 아래 명령을 실행합니다:
 
 ```bash
 roslaunch srobot robot.launch
@@ -322,7 +323,7 @@ roslaunch srobot teleop.launch
 ```
 
 ### 3) 키보드 조종 가이드
-콘솔 창에 키를 누르면 로봇이 엔터 없이 즉각 반응하여 주행합니다:
+콘솔 창에 키를 누르면 터틀봇이 엔터 없이 즉각 반응하여 주행합니다:
 
 | 키 (Key) | 동작 (Action) | 상세 설명 |
 |:---|:---|:---|
