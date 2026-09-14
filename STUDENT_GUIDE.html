@@ -2,96 +2,138 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>[교육용 교재] ROS 1 로봇 원격 조종 패키지(srobot) 만들기</title>
+<title>ROS 1 로봇 원격 조종 패키지(srobot) 만들기 실습 가이드</title>
 <style>
+  * {
+    box-sizing: border-box;
+  }
   body {
-    font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #ffffff;
+    color: #1f2328;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+    font-size: 15px;
     line-height: 1.6;
-    color: #202124;
-    max-width: 850px;
-    margin: 40px auto;
-    padding: 0 20px;
+    word-wrap: break-word;
+    margin: 0;
+    padding: 0;
+  }
+  .markdown-body {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 40px 48px;
+    background-color: #ffffff;
   }
   h1 {
-    color: #1a73e8;
-    border-bottom: 2px solid #1a73e8;
-    padding-bottom: 8px;
-    margin-top: 30px;
+    font-size: 2em;
+    font-weight: 600;
+    color: #1f2328;
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid #d1d9e0;
+    margin-top: 24px;
+    margin-bottom: 16px;
   }
   h2 {
-    color: #202124;
-    border-bottom: 1px solid #dadce0;
-    padding-bottom: 6px;
-    margin-top: 28px;
+    font-size: 1.5em;
+    font-weight: 600;
+    color: #1f2328;
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid #d1d9e0;
+    margin-top: 32px;
+    margin-bottom: 16px;
   }
   h3 {
-    color: #3c4043;
-    margin-top: 20px;
+    font-size: 1.25em;
+    font-weight: 600;
+    color: #1f2328;
+    margin-top: 24px;
+    margin-bottom: 12px;
+  }
+  hr {
+    height: 0.25em;
+    padding: 0;
+    margin: 24px 0;
+    background-color: #d1d9e0;
+    border: 0;
   }
   blockquote {
-    background: #f1f3f4;
-    border-left: 5px solid #1a73e8;
-    margin: 15px 0;
-    padding: 12px 16px;
-    border-radius: 0 8px 8px 0;
+    padding: 0.6em 1em;
+    color: #59636e;
+    border-left: 0.25em solid #d0d7de;
+    background-color: #f6f8fa;
+    border-radius: 0 6px 6px 0;
+    margin: 16px 0;
+  }
+  blockquote p {
+    margin: 0;
   }
   pre {
-    background-color: #f8f9fa;
-    border: 1px solid #dadce0;
-    border-radius: 6px;
-    padding: 14px;
-    overflow-x: auto;
-    font-family: 'Roboto Mono', Menlo, Monaco, Consolas, monospace;
+    padding: 16px;
+    overflow: auto;
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 1.45;
+    background-color: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    color: #1f2328;
+    margin: 16px 0;
   }
   code {
-    background-color: #f1f3f4;
-    padding: 2px 5px;
-    border-radius: 4px;
-    font-family: 'Roboto Mono', Menlo, Monaco, Consolas, monospace;
-    font-size: 13px;
+    padding: 0.2em 0.4em;
+    margin: 0;
+    font-size: 85%;
+    background-color: #eff1f3;
+    border-radius: 6px;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    color: #1f2328;
   }
   pre code {
     background: transparent;
     padding: 0;
+    font-size: 100%;
+    color: inherit;
   }
   table {
+    border-spacing: 0;
     border-collapse: collapse;
     width: 100%;
-    margin: 16px 0;
+    margin-top: 16px;
+    margin-bottom: 16px;
   }
   th, td {
-    border: 1px solid #dadce0;
-    padding: 10px 14px;
+    padding: 8px 14px;
+    border: 1px solid #d0d7de;
     text-align: left;
   }
   th {
-    background-color: #f1f3f4;
     font-weight: 600;
+    background-color: #f6f8fa;
+    color: #1f2328;
+  }
+  tr:nth-child(2n) {
+    background-color: #f6f8fa;
   }
   ul, ol {
-    padding-left: 24px;
+    padding-left: 2em;
+    margin-top: 0;
+    margin-bottom: 16px;
   }
   li {
-    margin-bottom: 6px;
+    margin-top: 0.25em;
   }
-  .highlight-box {
-    background-color: #e8f0fe;
-    border: 1px solid #aecbfa;
-    border-radius: 8px;
-    padding: 14px 18px;
-    margin: 16px 0;
+  li + li {
+    margin-top: 0.25em;
   }
 </style>
 </head>
 <body>
 
+<div class="markdown-body">
+
 <h1>ROS 1 로봇 원격 조종 패키지(srobot) 만들기 실습 가이드</h1>
 
 <blockquote>
-  <strong>수업 목표:</strong><br>
-  ROS(Robot Operating System)의 기본 원리인 <strong>퍼블리셔(Publisher)</strong>와 <strong>서브스크라이버(Subscriber)</strong>, 그리고 로봇 바퀴 제어용 <strong>Twist 메시지</strong>를 이해하고, 노트북 키보드로 로봇을 직접 조종하는 패키지를 완성합니다.
+  수업 목표: ROS(Robot Operating System)의 기본 원리인 퍼블리셔(Publisher)와 서브스크라이버(Subscriber), 그리고 로봇 바퀴 제어용 Twist 메시지를 이해하고, 노트북 키보드로 로봇을 직접 조종하는 패키지를 완성합니다.
 </blockquote>
 
 <hr>
@@ -400,6 +442,8 @@ source devel/setup.bash
   <tr><td><strong>c</strong></td><td>속도 감소</td><td>선속도 0.02 m/s 감소</td></tr>
   <tr><td><strong>q</strong></td><td>종료</td><td>로봇 정지 후 종료</td></tr>
 </table>
+
+</div>
 
 </body>
 </html>
