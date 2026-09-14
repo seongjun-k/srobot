@@ -108,7 +108,15 @@ roslaunch srobot robot.launch
 *(OpenCR 연결과 모터 서브스크라이버가 동시에 시작됩니다)*
 
 #### [Step 2] 노트북에서 실행 (Laptop)
-새 터미널에서 텔레옵 콘솔을 실행합니다:
+
+**방법 A. 간편 원클릭 실행 (내 IP 자동 감지):**
+```bash
+cd ~/turtle_ws/src/srobot
+./run_teleop.sh [로봇IP]
+```
+> 노트북의 현재 IP를 자동으로 감지하여 `ROS_IP`를 설정하므로 `.bashrc`를 일일이 수정할 필요가 없습니다. (로봇 IP 생략 시 기본값 사용)
+
+**방법 B. 일반 roslaunch 실행:**
 ```bash
 roslaunch srobot teleop.launch
 # 또는
