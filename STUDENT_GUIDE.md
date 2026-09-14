@@ -1,67 +1,44 @@
-# ROS 1 로봇 원격 조종 패키지(srobot) 만들기 실습 가이드
+# ROS 1 Noetic 로봇 원격 조종 패키지 제작 실습
 
-> 수업 목표:
-> ROS(Robot Operating System)의 기본 원리인 퍼블리셔(Publisher)와 서브스크라이버(Subscriber), 그리고 로봇 바퀴 제어용 Twist 메시지를 이해하고, 노트북 키보드로 로봇을 직접 조종하는 패키지를 완성합니다.
+## 1. 프로젝트 개요
 
----
+### 1) 실습 목적
+- ROS의 기본 통신 원리인 퍼블리셔(Publisher)와 서브스크라이버(Subscriber) 구조를 이해합니다.
+- 로봇 바퀴 모터 제어 표준 메시지인 geometry_msgs/Twist의 구조와 동작 방식을 이해합니다.
+- 노트북 키보드 입력을 통해 원격 로봇을 실시간 조종하는 srobot 패키지를 완성합니다.
 
-## 목차
-1. 프로젝트 개요 및 시스템 구조
-2. 사전 준비 (필수 패키지 설치)
-3. 1단계: 패키지 준비하기 (Git Clone 또는 직접 생성)
-4. 2단계: 노트북 조종 노드 작성 (teleop_key.py)
-5. 3단계: 로봇 모터 드라이버 노드 작성 (motor_driver.py)
-6. 4단계: 런치(Launch) 파일 만들기
-7. 5단계: 네트워크 환경 설정 (노트북과 로봇 연결)
-8. 6단계: 로봇 조종 실습하기
+### 2) 시스템 통신 구조
+- 노트북 (teleop_key.py) : 키보드 입력을 감지하여 /srobot/key_cmd 토픽(String) 발행
+- 무선 네트워크 (Wi-Fi) : 노트북과 로봇 간 ROS 멀티 마신 무선 통신 연결
+- 로봇 (motor_driver.py) : /srobot/key_cmd 토픽 수신 후 /cmd_vel 토픽(Twist) 발행
+- OpenCR 보드 (rosserial) : /cmd_vel 속도 지휘값을 받아 좌/우 다이나믹셀 모터 구동
 
 ---
 
-## 1. 프로젝트 개요 및 시스템 구조
+## 2. 패키지 구성 및 준비
 
-### 1.1 이번 시간에 무엇을 만드나요?
-- 노트북에서 w, a, s, d, x 키를 누르면
-- Wi-Fi 무선 통신을 통해 로봇에 명령이 전달되어
-- 로봇 바퀴 모터가 회전하여 로봇이 움직입니다.
+### 1) 패키지 이름 : srobot
+### 2) 의존성 패키지 : rospy, std_msgs, geometry_msgs, rosserial_python
 
-### 1.2 시스템 통신 구조
-- 노트북 (teleop_key.py)
-  -> /srobot/key_cmd 토픽 발행 (String 메시지)
-  -> Wi-Fi 네트워크
-  -> 로봇 (motor_driver.py)
-  -> /cmd_vel 토픽 발행 (Twist 메시지)
-  -> OpenCR 보드 (rosserial)
-  -> 바퀴 모터 구동
-
----
-
-## 2. 사전 준비 (필수 패키지 설치)
-
-로봇(라즈베리파이)에서 OpenCR 보드와 통신하기 위해 설치합니다.
+### 3) 로봇 측 필수 패키지 설치 및 권한 설정
+로봇(라즈베리파이) 터미널에서 OpenCR 시리얼 통신 패키지를 설치하고 권한을 부여합니다:
 
 ```bash
-# 로봇 터미널에서 실행
 sudo apt update
 sudo apt install -y ros-noetic-rosserial-python ros-noetic-rosserial-msgs
-
-# 시리얼 포트 접근 권한 설정
 sudo usermod -aG dialout $USER
 ```
 
----
-
-## 3. 1단계: 패키지 준비하기 (Git Clone 또는 직접 생성)
-
-### 방법 A. 깃허브에서 바로 다운로드하기 (Git Clone)
-이미 완성된 패키지를 내려받아 빠르게 실습하려면 워크스페이스의 src 폴더에서 클론합니다:
+### 4) 깃허브에서 패키지 다운로드 (Git Clone)
+이미 완성된 패키지를 깃허브에서 내려받아 바로 실습할 경우 워크스페이스에서 실행합니다:
 
 ```bash
 cd ~/turtle_ws/src
 git clone https://github.com/seongjun-k/srobot.git
 ```
 
-### 방법 B. 처음부터 내 손으로 직접 만들기
-패키지를 직접 하나씩 생성하며 배우고 싶다면 아래 명령어로 생성합니다:
+### 5) 직접 패키지 생성하기 (처음부터 직접 만들 경우)
+패키지를 기초부터 직접 만들어볼 경우 아래 명령어로 패키지와 폴더를 생성합니다:
 
 ```bash
 cd ~/turtle_ws/src
@@ -72,16 +49,11 @@ mkdir scripts launch
 
 ---
 
-## 4. 2단계: 노트북 조종 노드 작성 (scripts/teleop_key.py)
+## 3. 노트북 조종 노드 작성 (teleop_key.py)
 
-노트북에서 실행할 키보드 입력 프로그램입니다.
-아래 코드를 직접 입력하여 저장합니다.
-
-```bash
-nano scripts/teleop_key.py
-```
-
-### 소스 코드 (teleop_key.py)
+### 1) 소스 파일 경로 : scripts/teleop_key.py
+### 2) 소스 코드 작성
+노트북에서 엔터(Enter) 없이 키보드 입력을 즉시 감지하여 로봇으로 전송하는 노드입니다:
 
 ```python
 #!/usr/bin/env python3
@@ -141,22 +113,20 @@ if __name__ == '__main__':
         pass
 ```
 
-### 실행 권한 부여 (필수)
+### 3) 실행 권한 부여 (필수)
+작성한 파이썬 스크립트에 실행 권한(+x)을 부여합니다:
+
 ```bash
 chmod +x scripts/teleop_key.py
 ```
 
 ---
 
-## 5. 3단계: 로봇 모터 드라이버 노드 작성 (scripts/motor_driver.py)
+## 4. 로봇 모터 드라이버 노드 작성 (motor_driver.py)
 
-로봇에서 키 입력을 받아 실제 모터 속도(Twist)로 변환하는 노드입니다.
-
-```bash
-nano scripts/motor_driver.py
-```
-
-### 소스 코드 (motor_driver.py)
+### 1) 소스 파일 경로 : scripts/motor_driver.py
+### 2) 소스 코드 작성
+키 입력을 수신하여 다이나믹셀 모터 구동용 Twist 속도로 변환해 /cmd_vel로 발행하는 노드입니다:
 
 ```python
 #!/usr/bin/env python3
@@ -243,16 +213,19 @@ if __name__ == '__main__':
         pass
 ```
 
-### 실행 권한 부여 (필수)
+### 3) 실행 권한 부여 (필수)
+작성한 파이썬 스크립트에 실행 권한(+x)을 부여합니다:
+
 ```bash
 chmod +x scripts/motor_driver.py
 ```
 
 ---
 
-## 6. 4단계: 런치(Launch) 파일 만들기
+## 5. 런치(Launch) 파일 작성
 
-### 6.1 로봇용 런치 (launch/robot.launch)
+### 1) 로봇용 런치 파일 : launch/robot.launch
+OpenCR 통신 노드와 모터 드라이버 노드를 하나의 프로세스로 함께 실행합니다:
 
 ```xml
 <launch>
@@ -265,7 +238,8 @@ chmod +x scripts/motor_driver.py
 </launch>
 ```
 
-### 6.2 노트북 조종용 런치 (launch/teleop.launch)
+### 2) 노트북 조종용 런치 파일 : launch/teleop.launch
+노트북에서 키보드 텔레옵 콘솔 노드를 실행합니다:
 
 ```xml
 <launch>
@@ -275,25 +249,28 @@ chmod +x scripts/motor_driver.py
 
 ---
 
-## 7. 5단계: 네트워크 환경 설정 (노트북과 로봇 연결)
+## 6. 네트워크 환경 설정 (노트북과 로봇 무선 연결)
 
-### 7.1 내 IP 확인하기
-터미널에서 아래 명령어로 IP를 확인합니다:
+### 1) 내 IP 확인하기
+노트북과 로봇 각각 터미널에서 자신의 Wi-Fi IP 주소를 확인합니다:
+
 ```bash
 hostname -I
 ```
 
-### 7.2 환경변수 설정
-- ROS_MASTER_URI: roscore가 켜져 있는 로봇의 IP를 양쪽 컴퓨터에 똑같이 적어줍니다.
-- ROS_IP: 지금 명령어를 치고 있는 내 컴퓨터의 IP를 적어줍니다.
+### 2) 환경변수 설정 원리
+- ROS_MASTER_URI : roscore가 실행 중인 로봇의 IP 주소 (양쪽 모두 동일하게 입력)
+- ROS_IP : 현재 명령어를 입력하고 있는 컴퓨터 본인의 IP 주소
 
-**로봇 터미널:**
+### 3) 로봇 환경변수 등록
+
 ```bash
 export ROS_MASTER_URI=http://<로봇IP>:11311
 export ROS_IP=<로봇IP>
 ```
 
-**노트북 터미널:**
+### 4) 노트북 환경변수 등록
+
 ```bash
 export ROS_MASTER_URI=http://<로봇IP>:11311
 export ROS_IP=<노트북IP>
@@ -301,31 +278,41 @@ export ROS_IP=<노트북IP>
 
 ---
 
-## 8. 6단계: 로봇 조종 실습하기
+## 7. 로봇 주행 실습
 
-### [1] 빌드하기
+### 1) 워크스페이스 빌드하기
+노트북과 로봇의 워크스페이스에서 빌드를 수행합니다:
+
 ```bash
 cd ~/turtle_ws
 catkin_make
 source devel/setup.bash
 ```
 
-### [2] 로봇에서 모터 노드 실행
+### 2) 로봇에서 모터 노드 실행
+로봇에 SSH 접속하거나 로봇 본체에서 아래 명령을 실행합니다:
+
 ```bash
 roslaunch srobot robot.launch
 ```
 
-### [3] 노트북에서 조종 콘솔 실행
+### 3) 노트북에서 조종 콘솔 실행
+노트북 터미널에서 키보드 텔레옵 콘솔을 실행합니다:
+
 ```bash
 roslaunch srobot teleop.launch
 ```
 
-### [4] 키보드로 조종하기
-- w: 전진
-- x: 후진
-- a: 좌회전
-- d: 우회전
-- s: 정지
-- e: 속도 증가
-- c: 속도 감소
-- q: 종료
+### 4) 키보드 조종 가이드
+콘솔 창에 키를 누르면 로봇이 엔터 없이 즉각 반응하여 주행합니다:
+
+| 키 (Key) | 동작 (Action) | 상세 설명 |
+|:---|:---|:---|
+| **w** | 전진 | 현재 설정된 선속도로 앞쪽 주행 |
+| **x** | 후진 | 현재 설정된 선속도로 뒤쪽 주행 |
+| **a** | 좌회전 | 제자리 반시계방향 회전 |
+| **d** | 우회전 | 제자리 시계방향 회전 |
+| **s 또는 Space** | 정지 | 바퀴 모터 즉각 정지 |
+| **e** | 속도 증가 | 선속도 0.02 m/s 실시간 증가 |
+| **c** | 속도 감소 | 선속도 0.02 m/s 실시간 감소 |
+| **q** | 종료 | 로봇 정지 후 콘솔 프로그램 종료 |
