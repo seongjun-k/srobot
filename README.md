@@ -1,11 +1,11 @@
-# 🤖 srobot (SRobot Teleop & Direct Motor Control)
+# srobot (SRobot Teleop & Direct Motor Control)
 
 > **경량 로봇 텔레옵 및 OpenCR 다이나믹셀 직접 제어 ROS 1 Noetic 패키지**  
 > 복잡하고 무거운 전체 브링업(LiDAR, 카메라, 진단 노드 등)을 일일이 실행할 필요 없이, **단 하나의 런치 명령**으로 다이나믹셀 모터를 구동하고 노트북에서 실시간 키보드로 주행을 제어합니다.
 
 ---
 
-## 🌟 주요 특징 (Key Features)
+## 주요 특징 (Key Features)
 
 1. **원터치 브링업 & 모터 제어 통합 (`robot.launch`)**
    - 로봇 측에서 라이다나 카메라 등 불필요한 노드를 띄울 필요 없이, OpenCR 통신(`rosserial`)과 모터 서브스크라이버를 단일 프로세스로 구동합니다.
@@ -23,15 +23,15 @@
 
 ---
 
-## 📐 시스템 아키텍처 (Architecture)
+## 시스템 아키텍처 (Architecture)
 
 ```mermaid
 flowchart LR
-    subgraph Laptop ["💻 노트북 (Laptop)"]
+    subgraph Laptop ["노트북 (Laptop)"]
         Teleop["teleop_key.py\n(Keyboard Publisher)"]
     end
 
-    subgraph Robot ["🤖 로봇 (Robot / Raspberry Pi)"]
+    subgraph Robot ["로봇 (Robot / Raspberry Pi)"]
         Driver["motor_driver.py\n(Motor Subscriber)"]
         OpenCR_Node["opencr_core\n(rosserial_python)"]
         OpenCR_Board["OpenCR 1.0\n(Firmware)"]
@@ -48,7 +48,7 @@ flowchart LR
 
 ---
 
-## 🎮 키보드 조작 가이드 (Controls)
+## 키보드 조작 가이드 (Controls)
 
 | 키 | 동작 (Action) | 설명 |
 |:---:|:---|:---|
@@ -64,7 +64,7 @@ flowchart LR
 
 ---
 
-## 🚀 빠른 시작 (Quick Start)
+## 빠른 시작 (Quick Start)
 
 ### 1. 패키지 빌드 (Build)
 
@@ -80,21 +80,21 @@ source devel/setup.bash
 
 ### 2. ROS 네트워크 환경 설정 (Multi-Machine Network)
 
-같은 와이파이 네트워크에 연결된 상태에서 IP를 지정합니다.
+같은 네트워크에 연결된 상태에서 IP를 지정합니다.
 
-**로봇 (Robot - 172.30.11.234):**
+**로봇 (Robot):**
 ```bash
-export ROS_MASTER_URI=http://172.30.11.234:11311
-export ROS_IP=172.30.11.234
+export ROS_MASTER_URI=http://<ROBOT_IP>:11311
+export ROS_IP=<ROBOT_IP>
 ```
 
-**노트북 (Laptop - 172.30.6.174):**
+**노트북 (Laptop):**
 ```bash
-export ROS_MASTER_URI=http://172.30.11.234:11311
-export ROS_IP=172.30.6.174
+export ROS_MASTER_URI=http://<ROBOT_IP>:11311
+export ROS_IP=<LAPTOP_IP>
 ```
 
-> **Tip:** Tailscale 환경인 경우 각 노드의 Tailscale IP(`100.x.y.z`)를 사용하셔도 동일하게 동작합니다.
+> **참고:** Tailscale 또는 VPN 환경인 경우 각 노드의 가상 IP를 사용하셔도 동일하게 동작합니다.
 
 ---
 
@@ -114,11 +114,11 @@ roslaunch srobot teleop.launch
 # 또는
 rosrun srobot teleop_key.py
 ```
-이제 터미널에서 `w`, `a`, `s`, `d`, `x`를 눌러 로봇을 자유롭게 조종할 수 있습니다!
+이제 터미널에서 `w`, `a`, `s`, `d`, `x`를 눌러 로봇을 자유롭게 조종할 수 있습니다.
 
 ---
 
-## ⚡ (고급) 로봇 부팅 시 완전 자동 실행 (Systemd Auto-Start)
+## (고급) 로봇 부팅 시 완전 자동 실행 (Systemd Auto-Start)
 
 로봇에 SSH로 접속하는 것조차 건너뛰고 싶다면, 로봇에서 서비스를 등록할 수 있습니다.
 
@@ -129,9 +129,9 @@ sudo systemctl daemon-reload
 sudo systemctl enable srobot.service
 sudo systemctl start srobot.service
 ```
-이제 로봇 전원만 켜면 백그라운드에서 자동으로 `srobot`이 구동되므로, **노트북에서 `roslaunch srobot teleop.launch`만 켜면 즉시 주행**이 가능합니다!
+이제 로봇 전원만 켜면 백그라운드에서 자동으로 `srobot`이 구동되므로, **노트북에서 `roslaunch srobot teleop.launch`만 켜면 즉시 주행**이 가능합니다.
 
 ---
 
-## 📄 라이선스 (License)
+## 라이선스 (License)
 MIT License - seongjun-k

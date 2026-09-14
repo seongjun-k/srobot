@@ -29,7 +29,7 @@ from geometry_msgs.msg import Twist
 
 BANNER = """
 ======================================================
-           🤖 SROBOT TELEOPERATION CONSOLE 🤖          
+            SROBOT TELEOPERATION CONSOLE              
 ======================================================
                   [ w ] : 전진 (Forward)
    [ a ] : 좌회전               [ d ] : 우회전

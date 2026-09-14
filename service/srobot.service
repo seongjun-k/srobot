@@ -7,7 +7,7 @@ Wants=network-online.target
 Type=simple
 User=ubuntu
 WorkingDirectory=/home/ubuntu
-ExecStart=/bin/bash -c "source /opt/ros/noetic/setup.bash && source /home/ubuntu/catkin_ws/devel/setup.bash && export ROS_MASTER_URI=http://172.30.11.234:11311 && export ROS_IP=172.30.11.234 && roslaunch srobot robot.launch"
+ExecStart=/bin/bash -c "source /opt/ros/noetic/setup.bash && source /home/ubuntu/catkin_ws/devel/setup.bash && export ROS_MASTER_URI=http://localhost:11311 && export ROS_IP=$(hostname -I | awk '{print $1}') && roslaunch srobot robot.launch"
 Restart=always
 RestartSec=3
 
