@@ -8,7 +8,7 @@
 ## 목차
 1. 프로젝트 개요 및 시스템 구조
 2. 사전 준비 (필수 패키지 설치)
-3. 1단계: ROS 패키지 생성하기
+3. 1단계: 패키지 준비하기 (Git Clone 또는 직접 생성)
 4. 2단계: 노트북 조종 노드 작성 (teleop_key.py)
 5. 3단계: 로봇 모터 드라이버 노드 작성 (motor_driver.py)
 6. 4단계: 런치(Launch) 파일 만들기
@@ -50,9 +50,18 @@ sudo usermod -aG dialout $USER
 
 ---
 
-## 3. 1단계: ROS 패키지 생성하기
+## 3. 1단계: 패키지 준비하기 (Git Clone 또는 직접 생성)
 
-터미널에서 catkin 워크스페이스의 src 폴더로 이동하여 패키지를 만듭니다.
+### 방법 A. 깃허브에서 바로 다운로드하기 (Git Clone)
+이미 완성된 패키지를 내려받아 빠르게 실습하려면 워크스페이스의 src 폴더에서 클론합니다:
+
+```bash
+cd ~/turtle_ws/src
+git clone https://github.com/seongjun-k/srobot.git
+```
+
+### 방법 B. 처음부터 내 손으로 직접 만들기
+패키지를 직접 하나씩 생성하며 배우고 싶다면 아래 명령어로 생성합니다:
 
 ```bash
 cd ~/turtle_ws/src
