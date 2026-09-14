@@ -120,26 +120,26 @@ def main():
                 sys.stdout.write(f"\r[상태] {current_state:<20} | 선속도: {linear_speed:.2f} m/s | 각속도: {angular_speed:.2f} rad/s   ")
                 sys.stdout.flush()
 
-            # 속도 조절
+            # 속도 조절 (동작 중 실시간 가감속)
             elif key == 'e':
                 linear_speed = min(0.30, linear_speed + 0.02)
                 pub_key.publish(f"speed:{linear_speed:.2f}:{angular_speed:.2f}")
-                sys.stdout.write(f"\r[상태] 선속도 증가 ▲         | 선속도: {linear_speed:.2f} m/s | 각속도: {angular_speed:.2f} rad/s   ")
+                sys.stdout.write(f"\r[상태] {current_state:<20} | 선속도: {linear_speed:.2f} m/s (+0.02) | 각속도: {angular_speed:.2f} rad/s   ")
                 sys.stdout.flush()
             elif key == 'c':
                 linear_speed = max(0.03, linear_speed - 0.02)
                 pub_key.publish(f"speed:{linear_speed:.2f}:{angular_speed:.2f}")
-                sys.stdout.write(f"\r[상태] 선속도 감소 ▼         | 선속도: {linear_speed:.2f} m/s | 각속도: {angular_speed:.2f} rad/s   ")
+                sys.stdout.write(f"\r[상태] {current_state:<20} | 선속도: {linear_speed:.2f} m/s (-0.02) | 각속도: {angular_speed:.2f} rad/s   ")
                 sys.stdout.flush()
             elif key == 'r':
                 angular_speed = min(2.0, angular_speed + 0.10)
                 pub_key.publish(f"speed:{linear_speed:.2f}:{angular_speed:.2f}")
-                sys.stdout.write(f"\r[상태] 각속도 증가 ▲         | 선속도: {linear_speed:.2f} m/s | 각속도: {angular_speed:.2f} rad/s   ")
+                sys.stdout.write(f"\r[상태] {current_state:<20} | 선속도: {linear_speed:.2f} m/s | 각속도: {angular_speed:.2f} rad/s (+0.10)   ")
                 sys.stdout.flush()
             elif key == 'v':
                 angular_speed = max(0.10, angular_speed - 0.10)
                 pub_key.publish(f"speed:{linear_speed:.2f}:{angular_speed:.2f}")
-                sys.stdout.write(f"\r[상태] 각속도 감소 ▼         | 선속도: {linear_speed:.2f} m/s | 각속도: {angular_speed:.2f} rad/s   ")
+                sys.stdout.write(f"\r[상태] {current_state:<20} | 선속도: {linear_speed:.2f} m/s | 각속도: {angular_speed:.2f} rad/s (-0.10)   ")
                 sys.stdout.flush()
 
     except Exception as e:

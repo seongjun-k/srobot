@@ -57,7 +57,25 @@ class SrobotMotorDriver:
                 parts = key.split(":")
                 self.linear_speed = float(parts[1])
                 self.angular_speed = float(parts[2])
-                rospy.loginfo(f"[설정 변경] 선속도: {self.linear_speed:.2f} m/s, 각속도: {self.angular_speed:.2f} rad/s")
+
+                # 현재 동작 중인 방향에 맞춰 실시간으로 출력 속도 즉시 갱신
+                if self.target_linear > 0:
+                    self.target_linear = self.linear_speed
+                elif self.target_linear < 0:
+                    self.target_linear = -self.linear_speed
+
+                if self.target_angular > 0:
+                    self.target_angular = self.angular_speed
+                elif self.target_angular < 0:
+                    self.target_angular = -self.angular_speed
+
+                # 변경된 속도 즉각 전송
+                twist = Twist()
+                twist.linear.x = self.target_linear
+                twist.angular.z = self.target_angular
+                self.cmd_pub.publish(twist)
+
+                rospy.loginfo(f"[속도 실시간 갱신] 설정(선속도: {self.linear_speed:.2f}, 각속도: {self.angular_speed:.2f}) -> 현재 출력(linear: {self.target_linear:.2f}, angular: {self.target_angular:.2f})")
                 return
             except Exception as e:
                 rospy.logwarn(f"속도 파싱 실패: {e}")
