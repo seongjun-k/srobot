@@ -106,7 +106,6 @@
   <li>4단계: 런치(Launch) 파일 만들기</li>
   <li>5단계: 네트워크 환경 설정 (노트북과 로봇 연결)</li>
   <li>6단계: 로봇 조종 실습하기</li>
-  <li>퀴즈 및 스스로 해보기</li>
 </ol>
 
 <hr>
@@ -401,26 +400,6 @@ source devel/setup.bash
   <tr><td><strong>c</strong></td><td>속도 감소</td><td>선속도 0.02 m/s 감소</td></tr>
   <tr><td><strong>q</strong></td><td>종료</td><td>로봇 정지 후 종료</td></tr>
 </table>
-
-<hr>
-
-<h2>9. 퀴즈 및 스스로 해보기</h2>
-
-<div class="highlight-box">
-  <h3>퀴즈 1. 로봇의 기본 전진 속도를 더 빠르게 바꾸려면?</h3>
-  <p><code>scripts/motor_driver.py</code> 파일의 9번째 줄 <code>linear_speed = 0.15</code> 값을 <code>0.20</code>으로 변경해보세요.</p>
-</div>
-
-<div class="highlight-box">
-  <h3>퀴즈 2. 후진할 때 선속도(linear.x)는 왜 음수(-)일까요?</h3>
-  <p>ROS 표준 좌표계(REP-103)에서 x축 앞쪽이 양수(+), 뒤쪽이 음수(-)이기 때문입니다.</p>
-</div>
-
-<div class="highlight-box">
-  <h3>도전 과제. 대각선 주행 키 만들어보기</h3>
-  <p>앞으로 가면서 동시에 좌회전하도록 만들려면:<br>
-  <code>twist.linear.x = linear_speed</code>와 <code>twist.angular.z = angular_speed</code>를 동시에 주면 곡선으로 회전합니다.</p>
-</div>
 
 </body>
 </html>
