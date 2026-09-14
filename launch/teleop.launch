@@ -1,0 +1,12 @@
+<launch>
+  <arg name="key_topic" default="/srobot/key_cmd"/>
+  <arg name="linear_speed" default="0.15"/>
+  <arg name="angular_speed" default="0.75"/>
+
+  <!-- 노트북 키보드 텔레옵 노드 (Enter 없이 실시간 입력) -->
+  <node pkg="srobot" type="teleop_key.py" name="srobot_teleop" output="screen">
+    <param name="key_topic" value="$(arg key_topic)"/>
+    <param name="linear_speed" value="$(arg linear_speed)"/>
+    <param name="angular_speed" value="$(arg angular_speed)"/>
+  </node>
+</launch>

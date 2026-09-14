@@ -1,0 +1,15 @@
+[Unit]
+Description=SRobot Auto Bringup and Motor Driver Service
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu
+ExecStart=/bin/bash -c "source /opt/ros/noetic/setup.bash && source /home/ubuntu/catkin_ws/devel/setup.bash && export ROS_MASTER_URI=http://172.30.11.234:11311 && export ROS_IP=172.30.11.234 && roslaunch srobot robot.launch"
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,23 @@
+<launch>
+  <!-- OpenCR Serial Parameters -->
+  <arg name="port" default="/dev/ttyACM0"/>
+  <arg name="baud" default="115200"/>
+
+  <!-- SRobot Driving Parameters -->
+  <arg name="linear_speed" default="0.15"/>
+  <arg name="angular_speed" default="0.75"/>
+  <arg name="cmd_timeout" default="0.0"/>
+
+  <!-- 1. OpenCR Serial Bridge Node (다이나믹셀 제어 /cmd_vel 인터페이스) -->
+  <node pkg="rosserial_python" type="serial_node.py" name="opencr_core" output="screen" respawn="true">
+    <param name="port" value="$(arg port)"/>
+    <param name="baud" value="$(arg baud)"/>
+  </node>
+
+  <!-- 2. SRobot Motor Subscriber Node (키 입력 수신 후 다이나믹셀 구동) -->
+  <node pkg="srobot" type="motor_driver.py" name="srobot_motor_driver" output="screen" respawn="true">
+    <param name="linear_speed" value="$(arg linear_speed)"/>
+    <param name="angular_speed" value="$(arg angular_speed)"/>
+    <param name="cmd_timeout" value="$(arg cmd_timeout)"/>
+  </node>
+</launch>
