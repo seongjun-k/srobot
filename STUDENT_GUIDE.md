@@ -1,8 +1,7 @@
-# [교육용 교재] ROS 1 로봇 원격 조종 패키지(srobot) 만들기
+# ROS 1 로봇 원격 조종 패키지(srobot) 만들기 실습 가이드
 
 > 수업 목표:
-> ROS(Robot Operating System)의 기본 원리인 퍼블리셔(Publisher)와 서브스크라이버(Subscriber), 그리고 로봇 바퀴 제어용 Twist 메시지를 이해하고, 노트북 키보드로 로봇을 직접 조종하는 패키지를 내 손으로 완성합니다.
-> (프린트하여 직접 코드를 보며 타이핑하기 좋게 특수 문자를 모두 제거한 클린 코드입니다)
+> ROS(Robot Operating System)의 기본 원리인 퍼블리셔(Publisher)와 서브스크라이버(Subscriber), 그리고 로봇 바퀴 제어용 Twist 메시지를 이해하고, 노트북 키보드로 로봇을 직접 조종하는 패키지를 완성합니다.
 
 ---
 
