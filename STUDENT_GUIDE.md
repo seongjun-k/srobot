@@ -93,7 +93,7 @@ def main():
     print("키를 누르면 로봇이 움직입니다 (종료: q)")
 
     while not rospy.is_shutdown():
-        key = get_key()
+        key = get_key().lower()
 
         if key == 'q':
             key_pub.publish('s')
