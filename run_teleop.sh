@@ -7,19 +7,30 @@
 # 다른 사용자가 .bashrc를 일일이 수정하지 않아도 바로 로봇과 연결됩니다.
 #
 # 사용법:
-#   ./run_teleop.sh              # 기본 로봇 IP로 접속
-#   ./run_teleop.sh 172.30.11.234 # 특정 로봇 IP 지정
+#   ./run_teleop.sh                 # 대화형으로 IP 입력 또는 ROS_MASTER_URI 사용
+#   ./run_teleop.sh <ROBOT_IP>      # 특정 로봇 IP 지정 (예: ./run_teleop.sh 192.168.0.50)
 # ==============================================================================
 
 # 1. 로봇 IP 설정
-DEFAULT_ROBOT_IP="172.30.11.234"
-
 if [ -n "$1" ]; then
     TARGET_ROBOT_IP="$1"
-elif [ -n "$ROS_MASTER_URI" ] && [ "$ROS_MASTER_URI" != "http://localhost:11311" ]; then
+elif [ -n "$ROS_MASTER_URI" ] && [ "$ROS_MASTER_URI" != "http://localhost:11311" ] && [ "$ROS_MASTER_URI" != "http://127.0.0.1:11311" ]; then
     TARGET_ROBOT_IP="$ROS_MASTER_URI"
 else
-    TARGET_ROBOT_IP="$DEFAULT_ROBOT_IP"
+    echo "======================================================"
+    echo "  SRobot Teleop Launcher"
+    echo "======================================================"
+    echo "사용법: $0 <로봇_IP>"
+    echo "  예시: $0 192.168.0.50"
+    echo ""
+    echo "또는 환경변수 ROS_MASTER_URI가 설정되어 있어야 합니다."
+    echo "======================================================"
+    read -r -p "연결할 로봇의 IP 주소를 입력하세요 (기본값: localhost): " INPUT_IP
+    if [ -n "$INPUT_IP" ]; then
+        TARGET_ROBOT_IP="$INPUT_IP"
+    else
+        TARGET_ROBOT_IP="127.0.0.1"
+    fi
 fi
 
 # http:// 및 포트 번호 제거하여 순수 IP만 추출
